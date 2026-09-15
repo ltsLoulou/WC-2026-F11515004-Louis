@@ -4,8 +4,7 @@
 ## :notebook_with_decorative_cover: Personal Information
 - Name:Louis Pizarro
 - number: F11515004
-- Research Direction: -
-As a Senior student in Software Engineering at Polytechnique Montreal, I want to take this course to gain a deeper understanding of wireless communications and their applications in everyday life.
+- As a Senior student in Software Engineering at Polytechnique Montreal, I want to take this course to gain a deeper understanding of wireless communications and their applications in everyday life.
 
 ## :notebook_with_decorative_cover: Assignment
 
