@@ -61,6 +61,15 @@ In each JSON file, I found the bits per second at:
 end → sum → bits_per_second
 ```
 
+![JSON scenario A](/readMeImages/lab2/image4.png)
+*Evidence 4 — end → sum → bits_per_second from scenario A*
+
+![JSON scenario B](/readMeImages/lab2/image5.png)
+*Evidence 5 — end → sum → bits_per_second from scenario B*
+
+![JSON scenario C](/readMeImages/lab2/image6.png)
+*Evidence 6 — end → sum → bits_per_second from scenario C*
+
 I converted the value to Mbps with this formula:
 
 ```text
@@ -71,9 +80,9 @@ This is the data I obtained, shown in the completed table below:
 
 | Scenario | Direction | Throughput (Mbps) |
 |----------|-----------|-------------------|
-| A | Downlink | |
-| B | Uplink | |
-| C | Uplink | |
+| A | Downlink | 90,6541 |
+| B | Uplink | 109,1172 |
+| C | Uplink | 124,4171 |
 
 I calculated how much C improves over B with this formula:
 
@@ -81,12 +90,25 @@ I calculated how much C improves over B with this formula:
 Improvement (%) = (C - B) ÷ B × 100
 ```
 
+C improves over B by 14,02 %
+
 Questions:
 
 1. What is the downlink throughput in Scenario A?
+
+    The downlink throughput in scenario A is 90,6541 Mbps.
+
 2. What is the uplink throughput in Scenario B?
+
+    The uplink throughput in scenario B is 109,1172 Mbps.
+
 3. Is the uplink throughput higher in B or C?
+
+    The uplink throughput is higher in scenario C.
+
 4. By approximately what percentage does C improve over B?
+
+    Scenario C has an uplink throughput approximately 14,02% better than Scenario B.
 
 ## 5. Task 3 — Check the Trade-off
 
