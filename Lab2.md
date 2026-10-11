@@ -1,0 +1,207 @@
+# Lab 2: gNB TDD Traffic Analysis
+
+## 1. Goal
+
+In this lab, you will compare three 5-second UDP iperf3 tests. You will learn how TDD slot allocation can affect downlink and uplink performance.
+
+You do not need to understand every packet. Follow the steps, complete the tables, and answer the short questions.
+
+## 2. Test Scenarios
+
+| Scenario | TDD setting | Traffic direction | Main idea |
+|----------|-------------|-------------------|-----------|
+| A | DL-heavy | Downlink | The TDD setting favors the traffic direction |
+| B | DL-heavy | Uplink | There are fewer opportunities for uplink traffic |
+| C | Balanced | Uplink | More uplink opportunities are available than in B |
+
+| Scenario | iperf3 JSON | Wireshark capture |
+|----------|-------------|-------------------|
+| A | `scenario-a-downlink.json` | `scenario-a-dl-heavy-downlink.pcapng` |
+| B | `scenario-b-uplink.json` | `scenario-b-dl-heavy-uplink.pcapng` |
+| C | `scenario-c-uplink.json` | `scenario-c-balanced-uplink.pcapng` |
+
+## 3. Task 1 — Confirm the Traffic Direction
+
+- `reverse: 1` means downlink in this lab.
+- `reverse: 0` means uplink in this lab.
+
+After opening each JSON file, I found the value at:
+
+```text
+start → test_start → reverse
+```
+
+This is the data I obtained, shown in the completed table below:
+
+| Scenario | Reverse value | Direction |
+|----------|---------------|-----------|
+| A | | |
+| B | | |
+| C | | |
+
+Questions:
+
+1. Does the traffic direction shown in the JSON match the scenario description? Show the evidence.
+
+## 4. Task 2 — Compare Throughput
+
+In each JSON file, I found the bits per second at:
+
+```text
+end → sum → bits_per_second
+```
+
+I converted the value to Mbps with this formula:
+
+```text
+Throughput (Mbps) = bits_per_second ÷ 1,000,000
+```
+
+This is the data I obtained, shown in the completed table below:
+
+| Scenario | Direction | Throughput (Mbps) |
+|----------|-----------|-------------------|
+| A | Downlink | |
+| B | Uplink | |
+| C | Uplink | |
+
+I calculated how much C improves over B with this formula:
+
+```text
+Improvement (%) = (C - B) ÷ B × 100
+```
+
+Questions:
+
+1. What is the downlink throughput in Scenario A?
+2. What is the uplink throughput in Scenario B?
+3. Is the uplink throughput higher in B or C?
+4. By approximately what percentage does C improve over B?
+
+## 5. Task 3 — Check the Trade-off
+
+In each JSON file, I found the lost percent and the jitter (in ms) at:
+
+```text
+end → sum → lost_percent
+end → sum → jitter_ms
+```
+
+This is the data I obtained, shown in the completed table below:
+
+| Scenario | Throughput (Mbps) | Packet loss (%) | Jitter (ms) |
+|----------|-------------------|-----------------|-------------|
+| B | | | |
+| C | | | |
+
+Questions:
+
+1. Does C have higher uplink throughput than B?
+2. Does C have lower packet loss than B?
+3. What is the trade-off when changing from B to C?
+
+## 6. Task 4 — Is the TDD Setting Suitable?
+
+Completed table, based on the scenario descriptions and my throughput results:
+
+| Scenario | TDD setting | Traffic direction | Do they match? |
+|----------|-------------|-------------------|----------------|
+| A | DL-heavy | Downlink | |
+| B | DL-heavy | Uplink | |
+| C | Balanced | Uplink | |
+
+Question:
+
+1. Why might Scenario C achieve better uplink throughput than Scenario B?
+
+## 7. Task 5 — Find GTP-U Information
+
+After opening a `.pcapng` file in Wireshark, I entered this display filter:
+
+```text
+gtp && ip
+```
+
+I chose a packet that contains two IPv4 headers. In the packet details, I expanded:
+
+1. the first `Internet Protocol Version 4` header;
+2. `User Datagram Protocol`;
+3. `GPRS Tunneling Protocol`; and
+4. the second `Internet Protocol Version 4` header.
+
+I recorded the following information from one packet:
+
+| Item | Value |
+|------|-------|
+| Packet number | |
+| Outer source IP | |
+| Outer destination IP | |
+| Inner source IP | |
+| Inner destination IP | |
+| TEID | |
+
+## 8. Task 6 — TCP Retransmissions
+
+The performance traffic is UDP, but iperf3 also uses a small TCP control connection.
+
+After applying this Wireshark filter:
+
+```text
+tcp.analysis.retransmission
+```
+
+I recorded the number of displayed packets:
+
+| Scenario | Displayed TCP retransmissions |
+|----------|-------------------------------|
+| A | |
+| B | |
+| C | |
+
+Question:
+
+1. Do these TCP retransmissions directly represent lost UDP performance packets?
+
+## 9. Task 7 — RTT and Packet Interval
+
+### TCP RTT
+
+I applied this filter:
+
+```text
+tcp.analysis.ack_rtt
+```
+
+I selected one packet and recorded its ACK RTT:
+
+| Scenario | Example TCP ACK RTT |
+|----------|---------------------|
+| A, B, or C | |
+
+This value is the RTT of the TCP control connection. It is not the RTT of the UDP data packets.
+
+### Packet interval
+
+I selected two nearby packets from the same flow. In the packet details, I found:
+
+```text
+Time delta from previous displayed frame
+```
+
+One example:
+
+| Flow | Packet numbers | Time interval |
+|------|----------------|---------------|
+| | | |
+
+Packet interval means the time between two packets seen at the capture point. It is not the same as RTT.
+
+## 10. Final Questions
+
+1. Does Scenario A use a TDD setting that matches its traffic direction?
+2. Why is Scenario B expected to have limited uplink resources?
+3. How much does uplink throughput change from B to C?
+4. What negative result is visible in C?
+5. Why can increasing UL slots improve uplink throughput?
+6. Is adding more UL slots always the best solution? Explain using throughput and packet loss.
+7. Suggest one simple follow-up test that could improve throughput without producing too much packet loss.
