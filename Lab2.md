@@ -118,19 +118,34 @@ In each JSON file, I found the lost percent and the jitter (in ms) at:
 end → sum → lost_percent
 end → sum → jitter_ms
 ```
+![JSON scenario B](/readMeImages/lab2/image7.png)
+*Evidence 7 — end → sum → lost_percent/jitter_ms from scenario B*
+
+![JSON scenario C](/readMeImages/lab2/image8.png)
+*Evidence 8 — end → sum → lost_percent/jitter_ms from scenario C*
 
 This is the data I obtained, shown in the completed table below:
 
 | Scenario | Throughput (Mbps) | Packet loss (%) | Jitter (ms) |
 |----------|-------------------|-----------------|-------------|
-| B | | | |
-| C | | | |
+| B | 109,1172 | 0,2356 | 0,1161 |
+| C | 124,4171 | 2,1339 | 0,1620 |
 
 Questions:
 
 1. Does C have higher uplink throughput than B?
+
+    Yes, Scenario C has a higher uplink throughput than Scenario B (124,4171 Mbps vs 109,1172 Mbps).
+
 2. Does C have lower packet loss than B?
+
+    No, Scenario C has a higher packet loss than Scenario B (2,1339% vs 0,2356%).
+
 3. What is the trade-off when changing from B to C?
+
+    The trade-off is that changing from B to C increases your overall uplink throughput, but significantly increasing packet loss and slightly increasing jitter.
+
+Scenario C has higher throughput, but higher packet loss than Scenario B. Therefore, the balanced TDD setting improves throughput, but it may reduce stability (higher packet loss % and jitter).
 
 ## 6. Task 4 — Is the TDD Setting Suitable?
 
