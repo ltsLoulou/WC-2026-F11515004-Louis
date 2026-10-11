@@ -35,14 +35,24 @@ This is the data I obtained, shown in the completed table below:
 
 | Scenario | Reverse value | Direction |
 |----------|---------------|-----------|
-| A | | |
-| B | | |
-| C | | |
+| A | 1 | downlink |
+| B | 0 | uplink |
+| C | 0 | uplink |
 
 Questions:
 
 1. Does the traffic direction shown in the JSON match the scenario description? Show the evidence.
 
+Yes, the traffic direction shown in the JSON matches the descriptions from the scenarios. See Evidence 1-3
+
+![JSON scenario A](/readMeImages/lab2/image1.png)
+*Evidence 1 — start → test_start → reverse from scenario A*
+
+![JSON scenario B](/readMeImages/lab2/image2.png)
+*Evidence 2 — start → test_start → reverse from scenario B*
+
+![JSON scenario C](/readMeImages/lab2/image3.png)
+*Evidence 3 — start → test_start → reverse from scenario C*
 ## 4. Task 2 — Compare Throughput
 
 In each JSON file, I found the bits per second at:
