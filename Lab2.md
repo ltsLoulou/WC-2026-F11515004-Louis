@@ -204,17 +204,29 @@ After applying this Wireshark filter:
 tcp.analysis.retransmission
 ```
 
+![Wireshark scenario A](/readMeImages/lab2/image11.png)
+*Evidence 11 — Displayed packets from scenario A*
+
+![Wireshark scenario B](/readMeImages/lab2/image12.png)
+*Evidence 12 — Displayed packets from scenario B*
+
+![Wireshark scenario C](/readMeImages/lab2/image13.png)
+*Evidence 13 — Displayed packets from scenario C*
+
 I recorded the number of displayed packets:
 
 | Scenario | Displayed TCP retransmissions |
 |----------|-------------------------------|
-| A | |
-| B | |
-| C | |
+| A | 14 |
+| B | 12 |
+| C | 12 |
 
 Question:
 
 1. Do these TCP retransmissions directly represent lost UDP performance packets?
+
+No, these TCP retransmissions do not directly represent lost UDP performance packets. The loss of TCP packets is due to the TCP control connection and not UDP directly. The throughput test uses UDP, and the capture shown in Wireshark could contain duplicates, so the number of displayed packets is not a direct representation.
+
 
 ## 9. Task 7 — RTT and Packet Interval
 
