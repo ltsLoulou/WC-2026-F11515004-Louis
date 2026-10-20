@@ -232,17 +232,22 @@ No, these TCP retransmissions do not directly represent lost UDP performance pac
 
 ### TCP RTT
 
-I applied this filter:
+I applied this filter to the .pcapng of scenario A:
 
 ```text
 tcp.analysis.ack_rtt
 ```
+![Wireshark scenario A](/readMeImages/lab2/image13.png)
+*Evidence 13 — .pcapng from scenario A*
 
 I selected one packet and recorded its ACK RTT:
 
+![Wireshark scenario A](/readMeImages/lab2/image14.png)
+*Evidence 14 — .pcapng from scenario A, seq 1 is transmitted at 64.560968 and received at 64.579130*
+
 | Scenario | Example TCP ACK RTT |
 |----------|---------------------|
-| A, B, or C | |
+| A | 0.018162 (18.162000 milliseconds)|
 
 This value is the RTT of the TCP control connection. It is not the RTT of the UDP data packets.
 
@@ -258,7 +263,14 @@ One example:
 
 | Flow | Packet numbers | Time interval |
 |------|----------------|---------------|
-| | | |
+| TCP | 1842 & 1843 | 6.000 microseconds |
+| TCP | 1843 & 1846| 4.000 microseconds |
+
+![Wireshark scenario A](/readMeImages/lab2/image15.png)
+*Evidence 15 — Time delta from previous displayed frame for frame 1843*
+
+![Wireshark scenario A](/readMeImages/lab2/image16.png)
+*Evidence 16 — Time delta from previous displayed frame for frame 1846*
 
 Packet interval means the time between two packets seen at the capture point. It is not the same as RTT.
 
