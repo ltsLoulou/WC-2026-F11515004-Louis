@@ -153,13 +153,15 @@ Completed table, based on the scenario descriptions and my throughput results:
 
 | Scenario | TDD setting | Traffic direction | Do they match? |
 |----------|-------------|-------------------|----------------|
-| A | DL-heavy | Downlink | |
-| B | DL-heavy | Uplink | |
-| C | Balanced | Uplink | |
+| A | DL-heavy | Downlink | Yes (A DL-heavy setting is suitable for downlink traffic). |
+| B | DL-heavy | Uplink | No (A DL-heavy setting may limit heavy uplink traffic). |
+| C | Balanced | Uplink | Yes (A balanced setting gives uplink traffic more opportunities). |
 
 Question:
 
 1. Why might Scenario C achieve better uplink throughput than Scenario B?
+
+Scenario C might achieve better uplink throughput than scenario B, because of the TDD setting that is used in those scenario. Scenario C used Balanced setting, that lead in more traffic opportunities 
 
 ## 7. Task 5 — Find GTP-U Information
 
