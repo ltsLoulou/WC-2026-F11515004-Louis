@@ -170,6 +170,8 @@ After opening a `.pcapng` file in Wireshark, I entered this display filter:
 ```text
 gtp && ip
 ```
+![Wireshark scenario A](/readMeImages/lab2/image9.png)
+*Evidence 9 — .pcapng from scenario A*
 
 I chose a packet that contains two IPv4 headers. In the packet details, I expanded:
 
@@ -178,16 +180,19 @@ I chose a packet that contains two IPv4 headers. In the packet details, I expand
 3. `GPRS Tunneling Protocol`; and
 4. the second `Internet Protocol Version 4` header.
 
-I recorded the following information from one packet:
+![Wireshark scenario A](/readMeImages/lab2/image10.png)
+*Evidence 10 — Packet 1850 with all of the packets details from above expanded*
+
+I recorded the following information from this packet:
 
 | Item | Value |
 |------|-------|
-| Packet number | |
-| Outer source IP | |
-| Outer destination IP | |
-| Inner source IP | |
-| Inner destination IP | |
-| TEID | |
+| Packet number | 1850 |
+| Outer source IP | 192.168.70.134 |
+| Outer destination IP | 192.168.70.129 |
+| Inner source IP | 192.168.70.135 |
+| Inner destination IP | 10.0.0.6 |
+| TEID | 0xcddc4529 (3453764905) |
 
 ## 8. Task 6 — TCP Retransmissions
 
