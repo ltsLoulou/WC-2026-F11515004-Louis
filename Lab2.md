@@ -349,7 +349,7 @@ Answer:
 
 Completed table, based on the scenario descriptions and my throughput results:
 
-| Scenario | TDD setting | Traffic direction | Do they match? |
+| Scenario | TDD setting | Traffic direction | Is the setting suitable for this direction? Why? |
 |----------|-------------|-------------------|----------------|
 | A | DL-heavy | Downlink | Yes (A DL-heavy setting is suitable for downlink traffic). |
 | B | DL-heavy | Uplink | No (A DL-heavy setting may limit heavy uplink traffic). |
