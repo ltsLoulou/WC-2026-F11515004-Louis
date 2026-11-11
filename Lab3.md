@@ -55,27 +55,32 @@ Observe their terminal outputs and locate evidence of the following stages.
 
 | Stage | Successful? | Evidence from logs |
 |---|---|---|
-| CN5G initialization |  | |
-| gNB NG Setup | | |
-| UE synchronization | | |
-| RRC connection establishment | | |
-| UE Registration | | |
-| PDU Session Establishment | | |
-| UE tunnel creation | | |
+| CN5G initialization | Yes | ![](/readMeImages/lab3/proof1.png)*docker compose ps: containers healthy*|
+| gNB NG Setup | Yes | ![](/readMeImages/lab3/proof2.png)*Send NGSetupRequest to AMF, Received NGSetupResponse from AMF, cell PLMN 001.01 Cell ID 12345678 is in service* |
+| UE synchronization | Yes  |![](/readMeImages/lab3/proof3.png) *Initial sync successful, PCI: 0, UE synchronized!* |
+| RRC connection establishment | Yes | ![](/readMeImages/lab3/proof4.png) *4-Step RA procedure succeeded, State = NR_RRC_CONNECTED*|
+| UE Registration |  Yes | ![](/readMeImages/lab3/proof5.png)*Received Registration Accept with result 3GPP, Send NAS_UPLINK_DATA_REQ message(RegistrationComplete)*|
+| PDU Session Establishment | Yes | ![](/readMeImages/lab3/proof6.png)*Received PDU Session Establishment Accept, UE IPv4: 10.0.0.2*|
+| UE tunnel creation | Yes | ![](/readMeImages/lab3/proof7.png)![](/readMeImages/lab3/proof8.png)|
 
 Take screenshots showing the gNB and UE successfully connected.
 
 ![screenshot of gNB successfully connected](/readMeImages/lab3/image1.png)
-*Evidence 1 — screenshot of gNB successfully connected*
+*Evidence 1 — screenshot of gNB and UE successfully connected*
 
-![screenshot of UE successfully connected](/readMeImages/lab3/image2.png)
-*Evidence 2 — screenshot of UE successfully connected*
 
 **Questions:**
 
 1. Does a successful NG Setup guarantee that a UE can register? Explain.
+
+   No, because NG Setup only happens between the gNB and the AMF to check parameters like PLMN and TAC without involving a subscriber. Registration requires a provisioned IMSI and successful authentication.
+
 2. Why can the UE establish an RRC connection but still fail Registration?
+
+    Because RRC is only a radio procedure between the UE and the gNB. Registration is a NAS procedure between the UE and the AMF. The AMF can still reject it for an unknown IMSI, failed authentication, or a slice not allowed, even if the radio link works.
 3. What additional procedure is required after Registration before user data can be exchanged?
+
+    A PDU Session Establishment is required. The AMF contacts the SMF to configure the UPF, and the gNB sets up the radio bearer and GTP-U tunnel for the UE IP address. Without a PDU session, the UE is registered but has no path for user data.
 
 ## 4. Task 2 — Investigate RFsimulator Communication
 
@@ -108,20 +113,29 @@ Complete the table:
 
 | Item | Observed Value |
 |---|---|
-| gNB process ID | |
-| nrUE process ID | |
-| RFsimulator transport protocol | |
-| RFsimulator port | |
-| TCP connection state | |
-| Connected process(es) | |
+| gNB process ID | 297030 |
+| nrUE process ID | 297925 |
+| RFsimulator transport protocol | TCP |
+| RFsimulator port | 4043 |
+| TCP connection state | ESTAB (gNB side listening: LISTEN) |
+| Connected process(es) | nr-softmodem (server, pid 297030) and nr-uesoftmodem (client, pid 297925) |
 
 Take one screenshot showing the TCP connection.
+
+![screenshot of gNB successfully connected](/readMeImages/lab3/image2.png)
+*Evidence 2 — screenshot of the TCP connection*
 
 **Questions:**
 
 1. Why does RFsimulator use a TCP connection instead of a physical antenna?
+
+    RFsimulator replaces the RF hardware with software. The gNB and nrUE exchange IQ samples through a reliable TCP socket to stay synchronized without physical antennas.
 2. Are the TCP packets exchanged by RFsimulator the same as the UE's application-layer IP packets?
+
+    No. The TCP connection carries IQ samples for the radio waveform. The UE's IP packets are the user data payload that travels inside those IQ samples.
 3. Does using RFsimulator mean that the UE and gNB are performing no physical-layer processing? Explain.
+
+    No. Both still run the full PHY processing. Like we can see in the logs, this shows as PBCH decoding and the RACH procedure. Only the analog RF hardware is replaced by TCP.
 
 ## 5. Task 3 — Verify End-to-End Connectivity
 
