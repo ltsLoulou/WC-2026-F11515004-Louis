@@ -122,7 +122,7 @@ Complete the table:
 
 Take one screenshot showing the TCP connection.
 
-![screenshot of gNB successfully connected](/readMeImages/lab3/image2.png)
+![TCP connection](/readMeImages/lab3/image2.png)
 *Evidence 2 — screenshot of the TCP connection*
 
 **Questions:**
@@ -155,22 +155,31 @@ Record:
 
 | Measurement | Observed Value |
 |---|---|
-| UE IP address | |
-| Destination IP | |
-| Packets transmitted | |
-| Packets received | |
-| Packet loss (%) | |
-| Minimum RTT (ms) | |
-| Average RTT (ms) | |
-| Maximum RTT (ms) | |
+| UE IP address | 10.0.0.2 |
+| Destination IP | 	192.168.70.135 |
+| Packets transmitted | 10 |
+| Packets received | 10 |
+| Packet loss (%) | 0 |
+| Minimum RTT (ms) | 173,957 |
+| Average RTT (ms) | 190,836 |
+| Maximum RTT (ms) | 207,998 |
 
 Take a screenshot of the Ping result.
+
+![Ping result](/readMeImages/lab3/image3.png)
+*Evidence 3 — screenshot of the ping result*
 
 **Questions:**
 
 1. Why must Ping use the `oaitun_ue1` interface in this experiment?
+
+    Ping must use the oaitun_ue1 interface to force the packets through the simulated 5G link. Without it, Linux would use the default route and bypass the 5G network entirely.
 2. Does successful Registration guarantee successful user-plane connectivity?
+
+    No, because Registration is only a control-plane procedure between the UE and the AMF. User-plane connectivity still requires a PDU session, a data radio bearer, and a GTP-U tunnel, which can fail even if the UE is registered.
 3. What does a successful Ping prove, and what does it not prove about the simulated 5G system?
+
+    It proves that the user-plane chain works end to end, with 0% loss in my test. It does not prove real over-the-air performance or real 5G latency because there is no RF hardware and the delay only reflects software processing on a VM.
 
 ## 6. Task 4 — Investigate the Effect of Packet Size
 
@@ -184,17 +193,25 @@ Perform three experiments using the same established 5G connection.
 ping -I oaitun_ue1 -s 56 -c 30 -i 0.2 192.168.70.135
 ```
 
+![Ping result A](/readMeImages/lab3/pingA.png)
+*Evidence 4 — ping result scenario A*
+
+
 **Scenario B — Medium Packets**
 
 ```bash
 ping -I oaitun_ue1 -s 512 -c 30 -i 0.2 192.168.70.135
 ```
+![Ping result B](/readMeImages/lab3/pingB.png)
+*Evidence 5 — ping result scenario B*
 
 **Scenario C — Large Packets**
 
 ```bash
 ping -I oaitun_ue1 -s 1200 -c 30 -i 0.2 192.168.70.135
 ```
+![Ping result C](/readMeImages/lab3/pingC.png)
+*Evidence 6 — ping result scenario C*
 
 Note: `-s` specifies ICMP payload size, not the complete IP packet size.
 
@@ -202,23 +219,34 @@ Complete the table:
 
 | Scenario | ICMP Payload | Avg. RTT (ms) | Max. RTT (ms) | Packet Loss (%) |
 |---|---:|---:|---:|---:|
-| A | 56 bytes | | | |
-| B | 512 bytes | | | |
-| C | 1200 bytes | | | |
+| A | 56 bytes | 150,608 | 227,413 | 0 |
+| B | 512 bytes | 215,755 | 316,024 | 0 |
+| C | 1200 bytes | 216.583 | 312,799 | 0 |
 
 Calculate the RTT difference:
 
 ```text
 RTT Difference = Average RTT(C) - Average RTT(A)
+               = 216,583 − 150,608 = 65,975 ms
 ```
 
 **Questions:**
 
 1. Which scenario has the highest average RTT?
+
+    Scenario C has the highest average RTT with 216,583 ms. But like we can see in the results, Scenario B is practically equal at 215,755 ms, so the only clear difference is between A and the other two.
 2. Does increasing packet size always increase RTT in your measurements?
+
+    No. My results show that average RTT rose by 65 ms from A to B, but by under 1 ms from B to C despite having twice the payload. The increase is not proportional to packet size.
 3. Why might a larger packet require more transmission or processing resources?
+
+    A larger packet needs more bits to be segmented, coded, and mapped to more resource blocks. This takes more PHY processing, more slots to schedule, and more byte processing at each layer.
 4. What factors other than packet size could affect RTT in a software-based 5G network?
+
+    The CPU load of the emulated VM, the TDD slot pattern, and the timing of real-time threads. This explains the large RTT spread and the drift I measured.
 5. Can these results be interpreted as real over-the-air 5G latency? Explain.
+
+    No. There is no real RF hardware and the radio samples travel through a TCP socket. The RTT of 150 to 217 ms is dominated by software processing on the VM, so it cannot be interpreted as real 5G latency.
 
 Do not assume that RTT must increase with packet size. Use your measured values to support your explanation.
 
