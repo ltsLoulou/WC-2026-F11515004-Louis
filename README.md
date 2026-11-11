@@ -19,8 +19,13 @@ In this lab, you will use Wireshark to analyze how a UE establishes an RRC conne
 
 - **LAB2 : gNB TDD Traffic Analysis
     -  Assignment Information: [Lab2](Lab2.md)
-    -  **Deadline : 12:00, Oct. 5**
+    -  **Deadline : 12:00, Nov. 8**
     - Goal:
 In this lab,you will compare three 5-second UDP iperf3 tests. You will learn how TDD slot allocation can affect downlink and uplink performance.
     - - delivery: **put your file link here**.
     -  [ ] Peer review : [Vote the Top3](https://docs.google.com/forms/d/e/1FAIpQLScz-Kt_9ArkXOl8sG99549xqGK7W7vAqoY4lbbc3ph03zvFaw/viewform?usp=publish-editor) (DL: 23:59, Oct.7)
+
+- **LAB3 : Deploying a 5G Standalone Network Using OpenAirInterface
+    -  Assignment Information: [Lab3](Lab3.md)
+    -  **Deadline : 12:00, Nov. 16**
+    -  [ ] Peer review : [Vote the Top3](https://forms.gle/Mvza68DFBzPcZXfW6) (DL: 23:59, Nov.16)
