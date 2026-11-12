@@ -277,6 +277,15 @@ sudo ./nr-uesoftmodem \
 
 The IMSI `001010000000099` is not provisioned in the standard classroom subscriber configuration. Verify this assumption against the instructor's database before class.
 
+![bad IMSI](/readMeImages/lab3/badIMSI.png)
+*Evidence 7 —  Launching the UE with an Incorrect IMSI*
+
+![RCC connected & rejected](/readMeImages/lab3/RCCconnectedAndRejected.png)
+*Evidence 8 —  UE synchronized with gNB, RRC connection established and registration rejected*
+
+![likely Cause Of Error](/readMeImages/lab3/likelyCauseOfError.png)
+*Evidence 9 —  Likely cause fof the error*
+
 Observe the UE and AMF logs.
 
 ```bash
@@ -290,12 +299,12 @@ Complete the table:
 
 | Item | Observation |
 |---|---|
-| Modified parameter | |
-| UE synchronized with gNB? | |
-| RRC connection established? | |
-| Registration successful? | |
-| Error or rejection evidence | |
-| Likely cause | |
+| Modified parameter | IMSI 001010000000001 → 001010000000099 |
+| UE synchronized with gNB? | Yes |
+| RRC connection established? | Yes |
+| Registration successful? | No |
+| Error or rejection evidence | [NAS]    Received Registration reject message too short|
+| Likely cause | The new IMSI value is not in the DB, making the authentication impossible|
 
 If the expected registration rejection does not appear, report the actual logs instead of inventing a failure message.
 
@@ -309,12 +318,24 @@ Restart the nrUE using:
 
 Confirm that the UE successfully registers again and that Ping works.
 
+
+![UE successfully registers](/readMeImages/lab3/UEsuccessfullyregisters.png)
+*Evidence 10 —  UE successfully registers with original IMSI*
+
 **Questions:**
 
 1. Why can the UE potentially synchronize with the gNB even when the IMSI is incorrect?
+
+    Synchronization is only a physical-layer procedure. The gNB broadcasts the SSB and SIB1 to every UE, and the IMSI is only used later in NAS messages. Like we can see in my setup, the UE synchronized and reached RRC_CONNECTED before being rejected.
 2. Which network function is involved in UE authentication?
+
+    The AUSF runs the authentication procedure and relies on the UDM to retrieve subscriber credentials. If the subscriber is not found, no authentication vector is produced and the AMF rejects the registration.
 3. Why does changing an IMSI affect Registration but not the RFsimulator TCP connection itself?
+
+    The TCP connection only carries IQ samples for the simulated radio link and is established before any NAS messages. The IMSI is only checked by the core network during registration, so a wrong IMSI breaks the NAS procedure but leaves the TCP connection working.
 4. What evidence proves that restoring the correct configuration solved the problem?
+
+    My logs show that after restoring the correct IMSI, the UE received a Registration Accept and a PDU Session Establishment Accept. The oaitun_ue1 interface is successfully configured with an IP address, and the ping gets 0% loss, proving the IMSI was the only issue.
 
 Submit evidence from both the failed and recovered connections.
 
@@ -327,8 +348,8 @@ Complete the comparison:
 
 | Feature | OAI RFsimulator | Physical 5G System |
 |---|---|---|
-| gNB and UE protocol stack | | |
-| OFDM signal processing | | |
+| gNB and UE protocol stack | Full OAI stack runs | Full OAI stack runs |
+| OFDM signal processing | Done in software; IQ samples are generated and decoded, but exchanged as data | |
 | Physical antennas | | |
 | RF hardware impairments | | |
 | Wireless propagation effects | | |
