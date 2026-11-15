@@ -348,29 +348,47 @@ Complete the comparison:
 
 | Feature | OAI RFsimulator | Physical 5G System |
 |---|---|---|
-| gNB and UE protocol stack | Full OAI stack runs | Full OAI stack runs |
-| OFDM signal processing | Done in software; IQ samples are generated and decoded, but exchanged as data | |
-| Physical antennas | | |
-| RF hardware impairments | | |
-| Wireless propagation effects | | |
-| 5G Core connectivity | | |
+| gNB and UE protocol stack | Yes | Yes |
+| OFDM signal processing | Yes | Yes |
+| Physical antennas | No | Yes |
+| RF hardware impairments | Not inherently | Yes|
+| Wireless propagation effects | Not inherently | Yes|
+| 5G Core connectivity | Yes | Yes |
 
 **Questions:**
 
 1. Which parts of the 5G system remain functional when physical RF hardware is replaced with RFsimulator?
+
+    The NR protocol processing of the gNB and nrUE, the OFDM signal processing, and the 5G Core connectivity all remain functional. Only the radio front end is replaced by a TCP connection carrying IQ samples. Like we can see in my test, this is confirmed by the synchronization, the registration, the oaitun_ue1 interface, and the ping with 0% loss.
 2. Why is RFsimulator useful for testing the 5G protocol stack?
+
+    RFsimulator is useful because it runs the core, gNB, and nrUE on one machine without radio hardware or spectrum licenses. Tests are repeatable and we can introduce failures on purpose, like with the invalid IMSI. It gives a working baseline to validate signaling and core integration before moving to real hardware.
 3. Why might latency and throughput differ between RFsimulator and a real 5G deployment?
+
+    Latency and throughput differ because IQ samples are processed in software and exchanged through a TCP socket with no real radio channel. My results show an RTT of 150 to 217 ms, which is dominated by software scheduling on an emulated VM rather than air-interface delay. A real deployment depends on the radio channel and interference.
 4. What would need to change if you wanted to test a physical UE instead of OAI nrUE?
+    
+    To test a physical UE, the gNB would need to run with real RF hardware instead of RFsimulator. The physical UE's SIM would need its IMSI and keys provisioned in the core database. The network settings like band, PLMN, and slice would also have to match what the UE supports, and the transmission must be in a legal or shielded setup.
 
 ## 9. Final Analysis
 
 Answer each question in three to five sentences.
 
 1. Describe the complete process from starting the OAI 5GC to successful user-plane connectivity.
+
+    The startup progresses by starting the healthy CN5G containers, then the gNB connects to the AMF to complete NG Setup. The nrUE connects to the RFsimulator, synchronizes, establishes the RRC connection, and registers with the AMF. Finally, the PDU session creates the oaitun_ue1 interface, and like we can see in my test, a ping through it gets 10/10 replies.
 2. Explain the difference between an RFsimulator TCP connection and a 5G PDU Session.
+
+    The RFsimulator TCP connection replaces the radio link to carry IQ samples and exists before any 5G signaling. A PDU session is created after registration by NAS signaling to provide the UE IP address and the GTP-U path. The TCP link can be up without a PDU session, but it is the PDU session that carries the application traffic, not the TCP link.
 3. Based on your measurements, how did packet size affect RTT and packet loss?
+
+    Packet loss was 0% in all scenarios. My results show an average RTT of 150.608 ms for 56 bytes, 215.755 ms for 512 bytes, and 216.583 ms for 1200 bytes. Scenarios B and C are almost identical even though the payload doubled. Because the standard deviations are high, packet size does not clearly explain the RTT increase, and software scheduling on the VM probably contributed.
 4. Describe the registration failure you introduced and explain how you diagnosed and recovered from it.
+
+    I checked that the wrong IMSI was not in the database and restarted the UE. The UE synchronized and reached RRC connected but received no Registration Accept. Like we can see in the AMF logs, the cause was the missing subscription. I restored the correct IMSI and confirmed the fix with a successful ping on oaitun_ue1.
 5. Identify two limitations of this simulated environment and explain how they might affect experimental results.
+
+    The first limitation is that there is no real radio channel, meaning no interference or hardware impairments, making loss and retransmissions unrealistically good. The second limitation is that performance depends entirely on the CPU of the emulated VM. This makes the RTT high and variable, so it cannot predict real 5G latency or reliability.
 
 ## 10. Submission Checklist
 
