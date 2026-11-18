@@ -30,3 +30,9 @@ In this lab,you will compare three 5-second UDP iperf3 tests. You will learn how
      - - delivery: [Lab3](Lab3.md)
     -  **Deadline : 12:00, Nov. 16**
     -  [ ] Peer review : [Vote the Top3](https://forms.gle/Mvza68DFBzPcZXfW6) (DL: 23:59, Nov.16)
+
+- **LAB4 — 5G CU/DU Split Deployment and F1-C/F1-U Analysis
+    -  Assignment Information: [Lab4](https://hackmd.io/uMmEMQrUSvay4aWaGphB7g?view)
+     - - delivery: [Lab4](Lab4.md)
+    -  **Deadline : 12:00, Nov. 23**
+    -  [ ] Peer review : [Vote the Top3](https://docs.google.com/forms/d/e/1FAIpQLSeU5-_y7QUD2rFBU-K60wNgAoNFOLayq3fhBavxBv1ez03feQ/viewform?usp=send_form) (DL: 23:59, Nov.23)
