@@ -1,7 +1,8 @@
+
 # Lab 4 — 5G CU/DU Split Deployment and F1-C/F1-U Analysis
 
-**Student handout**  
-**Environment:** Ubuntu 24.04 LTS · OpenAirInterface (OAI) v2.4.0 · RFsimulator · no SDR required  
+**Student handout**
+**Environment:** Ubuntu 24.04 LTS · OpenAirInterface (OAI) v2.4.0 · RFsimulator · no SDR required
 **Prerequisite:** Lab 3 completed successfully (OAI CN5G, gNB, nrUE, UE tunnel and Ping)
 
 > **Lab objective:** Replace the monolithic gNB from Lab 3 with a split gNB-CU and gNB-DU. Capture and analyze both **F1-C** (F1AP over SCTP) and **F1-U** (GTP-U over UDP) in a single PCAP file. Verify that the UE can still establish a PDU session and reach the external data network.
@@ -92,11 +93,22 @@ grep -nE \
 
 **Record:** The CU and DU F1 addresses, the DU SSB frequency, and PRB count. If the local settings differ from the table above, adapt the following commands and capture filters accordingly.
 
+![Configuration files and frequency / F1 settings](/readMeImages/lab4/checkFrequencyAndSettings.png)
+*Evidence 1 — Configuration files present, and frequency and F1 network settings*
+
 **Questions**
 
 1. Which protocol layers mainly reside in the CU, and which reside in the DU?
+
+    The protocol layers that mainly reside in the CU are RRC, SDAP and PDCP, plus the links toward the core network. The ones in the DU are RLC, MAC and High-PHY.
+
 2. What is the purpose of the F1 interface?
+
+    The F1 interface connects the CU and the DU, and lets one CU manage one or more DUs. It has two parts: F1-C (control plane, F1AP over SCTP) sets up the connection and carries signaling for UEs, and F1-U (user plane, GTP-U over UDP) carries the UE's data between the CU and the DU.
+
 3. Why must the UE radio frequency be compatible with the DU rather than taken blindly from the previous lab?
+
+    A UE can only connect to a cell if it tunes to the frequency where the DU transmits its synchronization signal (SSB). The Lab 4 DU uses 3450.72 MHz (`absoluteFrequencySSB = 630048`), while the Lab 3 gNB used 3619.20 MHz. If the UE kept the Lab 3 frequency, it would search in the wrong place and never synchronize. That is why Lab 4 uses `-C 3450720000`.
 
 ---
 
@@ -112,6 +124,9 @@ docker compose up -d
 docker compose ps
 ```
 
+![CN5G started with all containers healthy](/readMeImages/lab4/dockerCompose.png)
+*Evidence 2 — CN5G started with all containers healthy*
+
 ### Terminal 2 — Start gNB-CU
 
 ```bash
@@ -120,6 +135,9 @@ cd ~/openairinterface5g-v2.4.0/cmake_targets/ran_build/build
 sudo ./nr-softmodem \
   -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb-cu.sa.f1.conf
 ```
+
+![gNB-CU connected to the AMF and F1AP started](/readMeImages/lab4/CUconnectedToAMFetF1APdemarre.png)
+*Evidence 3 — gNB-CU connected to the AMF (NGSetupResponse) and F1AP started*
 
 ### Terminal 3 — Start gNB-DU
 
@@ -132,6 +150,12 @@ sudo ./nr-softmodem \
   -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb-du.sa.band78.106prb.rfsim.pci0.conf \
   --rfsim
 ```
+
+![F1 Setup Request received by the CU](/readMeImages/lab4/F1SetupCU.png)
+*Evidence 4 — F1 Setup Request received and accepted by the CU*
+
+![F1 Setup Response received by the DU](/readMeImages/lab4/F1SetupDU.png)
+*Evidence 5 — F1 Setup Response received by the DU*
 
 ### Terminal 4 — Start nrUE
 
@@ -150,12 +174,21 @@ sudo ./nr-uesoftmodem \
 
 > **Instructor note:** This UE command reflects the working classroom split configuration. In particular, the original Lab 3 `-C 3619200000` setting was not compatible with this DU configuration. If a provided classroom image has different NR frequencies or UICC credentials, use the instructor-validated values.
 
+![UE connected and synchronized](/readMeImages/lab4/UEconnecte.png)
+*Evidence 6 — UE connected to the DU and synchronized (RRC_CONNECTED)*
+
+![UE registered and tunnel created](/readMeImages/lab4/UEregisterandtunnelcreated.png)
+*Evidence 7 — UE registered (Registration Accept) and PDU session / tunnel created (oaitun_ue1)*
+
 ### Check the UE connection
 
 ```bash
 ip -4 addr show oaitun_ue1
 ping -I oaitun_ue1 -c 10 192.168.70.135
 ```
+
+![Successful ping through oaitun_ue1](/readMeImages/lab4/successfulPing.png)
+*Evidence 8 — Successful ping through oaitun_ue1 to the External DN*
 
 **Evidence:** Screenshots of CU/DU startup, UE connection, and successful Ping. Record the observed UE IP, transmitted/received packets, packet loss, and average RTT. Do **not** invent values; they vary by machine.
 
